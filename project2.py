@@ -10,8 +10,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 input_shape = (500, 500, 3) #Desired image shape (Height, Width, Channel)
-train_dir = 'Data/train'
-validation_dir = 'Data/validation'
+train_dir = 'Data/train' 
+validation_dir = 'Data/valid'
 bsize = 32  #Set batch size
 
 '''Data Processing'''
@@ -26,3 +26,5 @@ validation_gen = validation_datagen.flow_from_directory(validation_dir,
                                                         batch_size=bsize,
                                                         class_mode = 'categorical',
                                                         target_size = input_shape[0:2])
+#print("Train generator class indices:", train_generator.class_indices) #Checking classes
+#print("Validation generator class indices:", validation_gen.class_indices)
