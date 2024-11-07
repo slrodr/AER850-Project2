@@ -44,15 +44,11 @@ def model_eval_plot (history):
     plt.subplot(1, 2, 1)
     plt.plot(epochs_model, train_loss, label='Training Loss', color='blue')
     plt.plot(epochs_model, val_loss, label='Validation Loss', color='orange')
-    plt.xlabel('Epochs') 
-    plt.ylabel('Loss')
-    plt.label()
+    plt.legend()
     
     plt.subplot(1, 2, 2)
     plt.plot(epochs_model, train_accuracy, label='Training Accuracy', color='blue')
     plt.plot(epochs_model, val_accuracy, label='Validation Accuracy', color='orange')
-    plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
     plt.legend()
     
     plt.tight_layout()
@@ -62,25 +58,28 @@ def model_eval_plot (history):
 '''First CNN Design'''
 #Design
 model1 = Sequential()
-model1.add(tf.keras.layers.Conv2D(filters = 16, kernel_size=(3, 3), activation='relu', input_shape=input_shape))
+model1.add(tf.keras.layers.Conv2D(filters = 16, kernel_size=(3, 3), activation='relu', 
+                                  input_shape=input_shape, padding = 'same'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu'))
+model1.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding = 'same'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
+model1.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding = 'same'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
+model1.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding = 'same'))
+model1.add(tf.keras.layers.MaxPooling2D((2,2)))
+model1.add(tf.keras.layers.Conv2D(256, (3, 3), activation='relu', padding = 'same'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
 model1.add(tf.keras.layers.Flatten())
-model1.add(tf.keras.layers.Dense(512, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.1, seed=2000))
+model1.add(tf.keras.layers.Dense(256, activation='relu'))
+model1.add(tf.keras.layers.Dropout(0.1, seed=999))
 model1.add(tf.keras.layers.Dense(128, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.2, seed=2000))
-model1.add(tf.keras.layers.Dense(512, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.1, seed=2000))
-model1.add(tf.keras.layers.Dense(128, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.2, seed=2000))
-model1.add(tf.keras.layers.Dense(128, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.5, seed=2000))
+model1.add(tf.keras.layers.Dropout(0.2, seed=999))
+model1.add(tf.keras.layers.Dense(64, activation='relu'))
+model1.add(tf.keras.layers.Dropout(0.3, seed=999))
+model1.add(tf.keras.layers.Dense(32, activation='relu'))
+model1.add(tf.keras.layers.Dropout(0.4, seed=999))
+model1.add(tf.keras.layers.Dense(32, activation='relu'))
+model1.add(tf.keras.layers.Dropout(0.5, seed=999))
 model1.add(tf.keras.layers.Dense(3, activation='softmax'))
 model1.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -93,3 +92,9 @@ history1 = model1.fit(train_gen, steps_per_epoch = 60, epochs = 50,
 
 #Evaluation
 model_eval_plot(history1)
+
+'''Second CNN Design'''
+#Design
+model2 = Sequential()
+model2.add(tf.keras.layers.Conv2D(filters = 16, activation = 'LeakyRelu', input_shape = input_shape, padding = 'same'))
+model2.add(tf.keras.layers.MaxPooling2D(2,2))
