@@ -4,8 +4,8 @@ Created on Fri Nov  1 16:40:08 2024
 
 @author: Santiagp
 """
-
-import tensorflow as tf
+import time
+from tensorflow.keras.layers import Conv2D, Flatten, MaxPooling2D, Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
@@ -58,48 +58,67 @@ def model_eval_plot (history, title):
 '''First CNN Design'''
 #Design
 model1 = Sequential()
-model1.add(tf.keras.layers.Conv2D(filters = 16, kernel_size=(3, 3), activation='relu', 
-                                  input_shape=input_shape))
-model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu'))
-model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
-model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
-model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(256, (3, 3), activation='relu'))
-model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(512, (3, 3), activation='relu'))
-model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Flatten())
-model1.add(tf.keras.layers.Dense(128, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.1, seed=999))
-model1.add(tf.keras.layers.Dense(64, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.2, seed=999))
-model1.add(tf.keras.layers.Dense(32, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.3, seed=999))
-model1.add(tf.keras.layers.Dense(16, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.4, seed=999))
-model1.add(tf.keras.layers.Dense(3, activation='softmax'))
+model1.add(Conv2D(filters = 16, kernel_size=(3, 3), activation='relu',
+                              	input_shape=input_shape, padding = 'same'))
+model1.add(MaxPooling2D((2,2)))
+model1.add(Conv2D(32, (3, 3), activation='relu', padding = 'same'))
+model1.add(MaxPooling2D((2,2)))
+model1.add(Conv2D(64, (3, 3), activation='relu', padding = 'same'))
+model1.add(MaxPooling2D((2,2)))
+model1.add(Conv2D(128, (3, 3), activation='relu', padding = 'same'))
+model1.add(MaxPooling2D((2,2)))
+model1.add(Conv2D(256, (3, 3), activation='relu', padding = 'same'))
+model1.add(MaxPooling2D((2,2)))
+model1.add(Flatten())
+model1.add(Dense(256, activation='relu', kernel_regularizer = 'l2'))
+model1.add(Dropout(0.1, seed=999))
+model1.add(Dense(128, activation='relu', kernel_regularizer = 'l2'))
+model1.add(Dropout(0.2, seed=999))
+model1.add(Dense(64, activation='relu', kernel_regularizer = 'l2'))
+model1.add(Dropout(0.3, seed=999))
+model1.add(Dense(32, activation='relu', kernel_regularizer = 'l2'))
+model1.add(Dropout(0.4, seed=999))
+model1.add(Dense(32, activation='relu', kernel_regularizer = 'l2'))
+model1.add(Dropout(0.5, seed=999))
+model1.add(Dense(3, activation='softmax'))
 model1.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
 
 model1.summary()
 
-#Training
+#Training while monitoring how long it takes
+start1 = time.time()
 history1 = model1.fit(train_gen, steps_per_epoch = 60, epochs = 50, 
                       validation_data=validation_gen, 
                       validation_steps = 20, verbose = 2)
+end1 = time.time()
+train_time1 = end1-start1
 
 #Evaluation
 model_eval_plot(history1, "Model 1 Loss and Accuracy")
+print(f"Model 1 training time: {train_time1 / 60:.2f} minutes")
 
 '''Second CNN Design'''
 #Design
 model2 = Sequential()
-model2.add(tf.keras.layers.Conv2D(filters = 16, kernel_size=(3, 3), activation = 'LeakyRelu', 
+model2.add(Conv2D(filters = 64, kernel_size=(3, 3), activation = 'LeakyRelu', 
                                   input_shape = input_shape, padding = 'same'))
-model2.add(tf.keras.layers.MaxPooling2D(2,2))
-model2.add(tf.keras.layers.Conv2D(32, (3,3), activation = 'relu', padding = 'same'))
-model2.add(tf.keras.layers.MaxPooling2D(2,2))
-model2.add(tf.keras.layers.Conv2D(64, (3, 3), activation = 'LeakyRelu'))
-model2.add(tf.keras.layers.MaxPooling2D(2,2))
+model2.add(MaxPooling2D(2,2))
+model2.add(Conv2D(128, (3,3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(MaxPooling2D(2,2))
+model2.add(Conv2D(256, (3, 3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(MaxPooling2D(2,2))
+model2.add(Conv2D(512, (3, 3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(MaxPooling2D(2,2))
+model2.add(Conv2D(1024, (3, 3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(MaxPooling2D(2,2))
+model2.add(Flatten())
+model2.add(Dense(1024, activation='elu'))
+model2.add(Dropout(0.3))
+model2.add(Dense(512, activation='elu'))
+model2.add(Dropout(0.4))
+model2.add(Dense(3, activation='softmax'))
+model2.compile(optimizer='nadam', loss='sparse_categorical_crossentropy', 
+               metrics = ['accuracy'])
+
+model2.summary()
