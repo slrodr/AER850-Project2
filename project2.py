@@ -32,23 +32,23 @@ validation_gen = validation_datagen.flow_from_directory(validation_dir,
 #print("Validation generator class indices:", validation_gen.class_indices)
 
 #Defining a function for model evaluation plotting
-def model_eval_plot (history):
+def model_eval_plot (history, title):
     train_loss = history.history['loss']
     val_loss = history.history['val_loss']
     train_accuracy = history.history['accuracy']
     val_accuracy = history.history['val_accuracy']
-    epochs_model = range(1, len(val_loss)+1)
     
     plt.figure()
+    plt.suptitle(title, fontsize=16)
     
     plt.subplot(1, 2, 1)
-    plt.plot(epochs_model, train_loss, label='Training Loss', color='blue')
-    plt.plot(epochs_model, val_loss, label='Validation Loss', color='orange')
+    plt.plot(train_loss, label='Training Loss', color='blue')
+    plt.plot(val_loss, label='Validation Loss', color='orange')
     plt.legend()
     
     plt.subplot(1, 2, 2)
-    plt.plot(epochs_model, train_accuracy, label='Training Accuracy', color='blue')
-    plt.plot(epochs_model, val_accuracy, label='Validation Accuracy', color='orange')
+    plt.plot(train_accuracy, label='Training Accuracy', color='blue')
+    plt.plot(val_accuracy, label='Validation Accuracy', color='orange')
     plt.legend()
     
     plt.tight_layout()
@@ -59,27 +59,29 @@ def model_eval_plot (history):
 #Design
 model1 = Sequential()
 model1.add(tf.keras.layers.Conv2D(filters = 16, kernel_size=(3, 3), activation='relu', 
-                                  input_shape=input_shape, padding = 'same'))
+                                  input_shape=input_shape))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding = 'same'))
+model1.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding = 'same'))
+model1.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding = 'same'))
+model1.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
-model1.add(tf.keras.layers.Conv2D(256, (3, 3), activation='relu', padding = 'same'))
+model1.add(tf.keras.layers.Conv2D(256, (3, 3), activation='relu'))
+model1.add(tf.keras.layers.MaxPooling2D((2,2)))
+model1.add(tf.keras.layers.Conv2D(512, (3, 3), activation='relu'))
 model1.add(tf.keras.layers.MaxPooling2D((2,2)))
 model1.add(tf.keras.layers.Flatten())
-model1.add(tf.keras.layers.Dense(256, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.1, seed=999))
 model1.add(tf.keras.layers.Dense(128, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.2, seed=999))
+model1.add(tf.keras.layers.Dropout(0.1, seed=999))
 model1.add(tf.keras.layers.Dense(64, activation='relu'))
+model1.add(tf.keras.layers.Dropout(0.2, seed=999))
+model1.add(tf.keras.layers.Dense(32, activation='relu'))
 model1.add(tf.keras.layers.Dropout(0.3, seed=999))
 model1.add(tf.keras.layers.Dense(32, activation='relu'))
-model1.add(tf.keras.layers.Dropout(0.4, seed=999))
-model1.add(tf.keras.layers.Dense(32, activation='relu'))
 model1.add(tf.keras.layers.Dropout(0.5, seed=999))
+model1.add(tf.keras.layers.Dense(16, activation='relu'))
+model1.add(tf.keras.layers.Dropout(0.4, seed=999))
 model1.add(tf.keras.layers.Dense(3, activation='softmax'))
 model1.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -91,10 +93,15 @@ history1 = model1.fit(train_gen, steps_per_epoch = 60, epochs = 50,
                       validation_steps = 20, verbose = 2)
 
 #Evaluation
-model_eval_plot(history1)
+model_eval_plot(history1, "Model 1 Loss and Accuracy")
 
 '''Second CNN Design'''
 #Design
 model2 = Sequential()
-model2.add(tf.keras.layers.Conv2D(filters = 16, activation = 'LeakyRelu', input_shape = input_shape, padding = 'same'))
+model2.add(tf.keras.layers.Conv2D(filters = 16, kernel_size=(3, 3), activation = 'LeakyRelu', 
+                                  input_shape = input_shape, padding = 'same'))
+model2.add(tf.keras.layers.MaxPooling2D(2,2))
+model2.add(tf.keras.layers.Conv2D(32, (3,3), activation = 'relu', padding = 'same'))
+model2.add(tf.keras.layers.MaxPooling2D(2,2))
+model2.add(tf.keras.layers.Conv2D(64, (3, 3), activation = 'LeakyRelu'))
 model2.add(tf.keras.layers.MaxPooling2D(2,2))
