@@ -5,6 +5,7 @@ Created on Fri Nov  1 16:40:08 2024
 @author: Santiagp
 """
 import time
+from tensorflow.keras import layers
 from tensorflow.keras.layers import Conv2D, Flatten, MaxPooling2D, Dense, Dropout
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -18,7 +19,10 @@ bsize = 32  #Set batch size
 
 '''Data Processing'''
 train_datagen = ImageDataGenerator(rescale = 1.0/255., shear_range = 0.4, 
-                                   zoom_range = 0.4, horizontal_flip = True)
+                                   zoom_range = 0.4, rotation_range=15,
+                                   width_shift_range=0.2,
+                                   height_shift_range=0.2, 
+                                   horizontal_flip = True)
 validation_datagen = ImageDataGenerator(rescale = 1.0/255.)
 
 train_gen = train_datagen.flow_from_directory(train_dir, batch_size=bsize,
@@ -70,16 +74,14 @@ model1.add(MaxPooling2D((2,2)))
 model1.add(Conv2D(256, (3, 3), activation='relu', padding = 'same'))
 model1.add(MaxPooling2D((2,2)))
 model1.add(Flatten())
-model1.add(Dense(256, activation='relu', kernel_regularizer = 'l2'))
-model1.add(Dropout(0.1, seed=999))
-model1.add(Dense(128, activation='relu', kernel_regularizer = 'l2'))
-model1.add(Dropout(0.2, seed=999))
-model1.add(Dense(64, activation='relu', kernel_regularizer = 'l2'))
-model1.add(Dropout(0.3, seed=999))
-model1.add(Dense(32, activation='relu', kernel_regularizer = 'l2'))
-model1.add(Dropout(0.4, seed=999))
-model1.add(Dense(32, activation='relu', kernel_regularizer = 'l2'))
-model1.add(Dropout(0.5, seed=999))
+model1.add(Dense(128, activation='relu'))
+model1.add(Dropout(0.2, seed=2000))
+model1.add(Dense(64, activation='relu'))
+model1.add(Dropout(0.3, seed=2000))
+model1.add(Dense(32, activation='relu'))
+model1.add(Dropout(0.4, seed=2000))
+model1.add(Dense(32, activation='relu'))
+model1.add(Dropout(0.5, seed=2000))
 model1.add(Dense(3, activation='softmax'))
 model1.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -101,24 +103,36 @@ print(f"Model 1 training time: {train_time1 / 60:.2f} minutes")
 '''Second CNN Design'''
 #Design
 model2 = Sequential()
-model2.add(Conv2D(filters = 64, kernel_size=(3, 3), activation = 'LeakyRelu', 
-                                  input_shape = input_shape, padding = 'same'))
+model2.add(Conv2D(filters = 64, kernel_size=(3, 3), activation = layers.LeakyReLU(), 
+                                  input_shape = input_shape))
 model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(128, (3,3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(Conv2D(128, (3,3), activation = layers.LeakyReLU()))
 model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(256, (3, 3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(Conv2D(256, (3, 3), activation = layers.LeakyReLU()))
 model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(512, (3, 3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(Conv2D(512, (3, 3), activation = layers.LeakyReLU()))
 model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(1024, (3, 3), activation = 'LeakyRelu', padding = 'same'))
+model2.add(Conv2D(1024, (2, 2), activation = layers.LeakyReLU()))
 model2.add(MaxPooling2D(2,2))
 model2.add(Flatten())
-model2.add(Dense(1024, activation='elu'))
+model2.add(Dense(64, activation='elu'))
 model2.add(Dropout(0.3))
-model2.add(Dense(512, activation='elu'))
+model2.add(Dense(32, activation='elu'))
 model2.add(Dropout(0.4))
 model2.add(Dense(3, activation='softmax'))
 model2.compile(optimizer='nadam', loss='sparse_categorical_crossentropy', 
                metrics = ['accuracy'])
 
 model2.summary()
+
+#Training while monitoring how long it takes
+start2 = time.time()
+history2 = model2.fit(train_gen, steps_per_epoch = 50, epochs = 50,
+                      validation_data = validation_gen,
+                      validation_steps = 20, verbose = 2)
+end2 = time.time()
+train_time2 = end2-start2
+
+#Evaluation
+model_eval_plot(history2, "Model 2 Loss and Accuracy")
+print(f"Model 2 training time: {train_time2 / 60:.2f} minutes")
