@@ -120,7 +120,7 @@ model2.add(Dropout(0.3))
 model2.add(Dense(32, activation='elu'))
 model2.add(Dropout(0.4))
 model2.add(Dense(3, activation='softmax'))
-model2.compile(optimizer='nadam', loss='sparse_categorical_crossentropy', 
+model2.compile(optimizer='nadam', loss='categorical_crossentropy', 
                metrics = ['accuracy'])
 
 model2.summary()
