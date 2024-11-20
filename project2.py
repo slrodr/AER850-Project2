@@ -95,30 +95,27 @@ history1 = model1.fit(train_gen, steps_per_epoch = 60, epochs = 50,
                       validation_steps = 20, verbose = 2)
 end1 = time.time()
 train_time1 = end1-start1
-
+model1.save('model1.h5')
 #Evaluation
 model_eval_plot(history1, "Model 1 Loss and Accuracy")
 print(f"Model 1 training time: {train_time1 / 60:.2f} minutes")
-
 '''Second CNN Design'''
 #Design
 model2 = Sequential()
-model2.add(Conv2D(filters = 64, kernel_size=(3, 3), activation = layers.LeakyReLU(), 
-                                  input_shape = input_shape))
-model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(128, (3,3), activation = layers.LeakyReLU()))
-model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(256, (3, 3), activation = layers.LeakyReLU()))
-model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(512, (3, 3), activation = layers.LeakyReLU()))
-model2.add(MaxPooling2D(2,2))
-model2.add(Conv2D(1024, (2, 2), activation = layers.LeakyReLU()))
-model2.add(MaxPooling2D(2,2))
+model2.add(Conv2D(filters = 16, kernel_size=(3, 3),strides=(1, 1), activation = layers.LeakyReLU,
+                              	input_shape=input_shape))
+model2.add(MaxPooling2D((2,2)))
+model2.add(Conv2D(32, (3, 3),strides=(1, 1), activation = layers.LeakyReLU))
+model2.add(MaxPooling2D((2,2)))
+model2.add(Conv2D(64, (3, 3),strides=(1, 1), activation = layers.LeakyReLU))
+model2.add(MaxPooling2D((2,2)))
 model2.add(Flatten())
 model2.add(Dense(64, activation='elu'))
-model2.add(Dropout(0.3))
+model2.add(Dropout(0.3, seed=2000))
 model2.add(Dense(32, activation='elu'))
-model2.add(Dropout(0.4))
+model2.add(Dropout(0.4, seed=2000))
+model2.add(Dense(16, activation='elu'))
+model2.add(Dropout(0.5, seed=2000))
 model2.add(Dense(3, activation='softmax'))
 model2.compile(optimizer='nadam', loss='categorical_crossentropy', 
                metrics = ['accuracy'])
@@ -136,3 +133,4 @@ train_time2 = end2-start2
 #Evaluation
 model_eval_plot(history2, "Model 2 Loss and Accuracy")
 print(f"Model 2 training time: {train_time2 / 60:.2f} minutes")
+model2.save('model2.h5')
