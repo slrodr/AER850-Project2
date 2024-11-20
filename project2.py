@@ -19,9 +19,7 @@ bsize = 32  #Set batch size
 
 '''Data Processing'''
 train_datagen = ImageDataGenerator(rescale = 1.0/255., shear_range = 0.4, 
-                                   zoom_range = 0.4, rotation_range=15,
-                                   width_shift_range=0.2,
-                                   height_shift_range=0.2, 
+                                   zoom_range = 0.4, rotation_range=15, 
                                    horizontal_flip = True)
 validation_datagen = ImageDataGenerator(rescale = 1.0/255.)
 
