@@ -74,3 +74,17 @@ for image_path in test_image_paths:
              f'Predicted Probabilities (Crack, Missing Head, Paint off ):\n ({pred_percs_strin})%',
              wrap=True, horizontalalignment='center', fontsize=10)
     plt.show()
+for image_path in test_image_paths:
+    img = load_img(image_path, target_size=(500, 500))
+    predicted_class = predict_class(model2, image_path)
+    class_label = class_mapping[predicted_class]
+    plt.figure(figsize=(6, 6))
+    plt.imshow(img)
+    plt.title(f'Predicted Class: {class_label}')
+    pred_percs = model2.predict(preprocess_image(image_path))[0] * 100
+    pred_percs = np.round(pred_percs, 2)
+    pred_percs_strin = ', '.join(map(str, pred_percs))
+    plt.figtext(0.5, 0.01,
+             f'Predicted Probabilities (Crack, Missing Head, Paint off ):\n ({pred_percs_strin})%',
+             wrap=True, horizontalalignment='center', fontsize=10)
+    plt.show()
