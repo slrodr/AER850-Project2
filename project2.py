@@ -106,12 +106,15 @@ print(f"Model 1 training time: {train_time1 / 60:.2f} minutes")
 '''Second CNN Design'''
 #Design
 model2 = Sequential()
-model2.add(Conv2D(filters = 16, kernel_size=(2, 2), activation = layers.LeakyReLU(alpha=0.1),
-                              	input_shape=input_shape, padding = 'same'))
+model2.add(Conv2D(filters = 16, kernel_size=(2, 2), input_shape=input_shape,
+                  padding = 'same'))
+model2.add(layers.LeakyReLU(alpha=0.1))
 model2.add(MaxPooling2D((2,2)))
-model2.add(Conv2D(32, (2, 2,), activation = layers.LeakyReLU(alpha=0.1), padding = 'same'))
+model2.add(Conv2D(32, (2, 2,), padding = 'same'))
+model2.add(layers.LeakyReLU(alpha=0.1))
 model2.add(MaxPooling2D((2,2)))
-model2.add(Conv2D(64, (2, 2), activation = layers.LeakyReLU(alpha=0.1), padding = 'same'))
+model2.add(Conv2D(64, (2, 2), padding = 'same'))
+model2.add(layers.LeakyReLU(alpha=0.1))
 model2.add(MaxPooling2D((2,2)))
 model2.add(Flatten())
 model2.add(Dense(16, activation='elu'))

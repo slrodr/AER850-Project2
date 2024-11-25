@@ -27,7 +27,7 @@ class_mapping = {
 
 # Function to preprocess an image for prediction
 def preprocess_image(image_path):
-    img = load_img(image_path, target_size=(100, 100))
+    img = load_img(image_path, target_size=(500, 500))
     img_array = img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     img_array /= 255.0  # Normalize the image
@@ -42,9 +42,9 @@ def predict_class(model, image_path):
 
 # Test image paths (replace these with your actual test images)
 test_image_paths = [
-    "D:\AER850\AER850-Project2\Data\test\crack\test_crack.jpg",
-    "D:\AER850\AER850-Project2\Data\test\missing-head\test_missinghead.jpg",
-    "D:\AER850\AER850-Project2\Data\test\paint-off\test_paintoff.jpg"
+    r"D:\AER850\AER850-Project2\Data\test\crack\test_crack.jpg",
+    r"D:\AER850\AER850-Project2\Data\test\missing-head\test_missinghead.jpg",
+    r"D:\AER850\AER850-Project2\Data\test\paint-off\test_paintoff.jpg"
 ]
 
 # Predict and print the classes for each test image using Model 1
@@ -53,7 +53,7 @@ for image_path in test_image_paths:
     predicted_class = predict_class(model1, image_path)
     print(f"Image: {image_path}, Predicted Class: {predicted_class}")
 
-# Predict and print the classes for each test image using Model 2
+#Predict and print the classes for each test image using Model 2
 print("\nPredictions using Model 2:")
 for image_path in test_image_paths:
     predicted_class = predict_class(model2, image_path)
@@ -61,25 +61,16 @@ for image_path in test_image_paths:
 
 # Plot the Results
 for image_path in test_image_paths:
-    # Load the image for display
-    img = load_img(image_path, target_size=(100, 100))
-    
-    # Predict the class
+    img = load_img(image_path, target_size=(500, 500))
     predicted_class = predict_class(model1, image_path)
-    
-    # Get the corresponding size label from the mapping
     class_label = class_mapping[predicted_class]
-    
-    # Display the image with the predicted class
-    plt.figure()
+    plt.figure(figsize=(6, 6))
     plt.imshow(img)
     plt.title(f'Predicted Class: {class_label}')
-    
-    # Display predicted probabilities
     pred_percs = model1.predict(preprocess_image(image_path))[0] * 100
     pred_percs = np.round(pred_percs, 2)
     pred_percs_strin = ', '.join(map(str, pred_percs))
-    plt.text(7, 7,
+    plt.figtext(0.5, 0.01,
              f'Predicted Probabilities (Crack, Missing Head, Paint off ):\n ({pred_percs_strin})%',
-             fontsize=9 )
+             wrap=True, horizontalalignment='center', fontsize=10)
     plt.show()
